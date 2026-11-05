@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>무온 — 점검은 한 번, 기록은 영구히</title>
+<meta name="description" content="신축 아파트 사전점검 기록을 블록체인으로 봉인하고, 하자담보기간 10년 동안 관리하는 앱. ㈜무온.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --deep:#0E3B2E;
+  --deep-2:#0A2C22;
+  --mint:#2FD3A0;
+  --mint-soft:#A8EBD3;
+  --ink:#12211C;
+  --muted:#61736B;
+  --line:#DCE6E0;
+  --paper:#F6F6F1;
+  --white:#FFFFFF;
+  --max:1180px;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:17px;line-height:1.65;letter-spacing:-.01em;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{margin:0;letter-spacing:-.035em;line-height:1.15;font-weight:800}
+p{margin:0}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#2FA98A}
+.muted{color:var(--muted)}
+
+/* header */
+.site-header{position:sticky;top:0;z-index:50;background:rgba(246,246,241,.88);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color .2s}
+.site-header.scrolled{border-bottom-color:var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:74px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{display:block}
+.brand-word{font-weight:800;font-size:19px;letter-spacing:-.02em;color:var(--deep)}
+.brand-word span{display:block;font-size:9px;letter-spacing:.34em;color:var(--muted);font-weight:600;margin-top:-3px}
+.nav-links{display:flex;gap:30px;font-size:15px;font-weight:600;color:#33443C}
+.nav-links a:hover{color:var(--deep)}
+.nav-cta{display:inline-flex;align-items:center;gap:8px;background:var(--deep);color:#fff;font-weight:700;font-size:14px;padding:11px 18px;border-radius:999px}
+.nav-cta:hover{background:var(--deep-2)}
+@media(max-width:860px){.nav-links{display:none}}
+
+/* hero */
+.hero{padding:76px 0 92px;position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.hero h1{font-size:clamp(44px,5.4vw,74px);color:var(--deep)}
+.hero h1 em{font-style:normal;color:#1E9C77;position:relative;white-space:nowrap}
+.hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.06em;height:.14em;background:var(--mint);opacity:.45;border-radius:2px;z-index:-1}
+.hero-sub{margin-top:26px;font-size:18.5px;line-height:1.75;color:#3D4F46;max-width:520px}
+.hero-sub strong{color:var(--deep);font-weight:700}
+.hero-actions{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:54px;padding:0 26px;border-radius:12px;font-weight:700;font-size:16px;border:1px solid transparent;transition:transform .15s ease,background .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--deep);color:#fff}
+.btn-primary:hover{background:var(--deep-2)}
+.btn-ghost{background:transparent;color:var(--deep);border-color:#C6D6CE}
+.btn-ghost:hover{background:#EDF3EF}
+.hero-note{margin-top:22px;font-size:13.5px;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap}
+.hero-note span{display:inline-flex;align-items:center;gap:7px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--mint);display:inline-block}
+
+/* phone mock */
+.stage{position:relative;display:flex;justify-content:center}
+.stage::before{content:"";position:absolute;inset:12% -4% 8% 6%;background:var(--deep);border-radius:34px;transform:rotate(-1.6deg)}
+.phone{position:relative;width:322px;background:#fff;border-radius:34px;padding:14px;box-shadow:0 24px 60px rgba(14,59,46,.22);z-index:1}
+.phone-screen{background:var(--paper);border-radius:24px;overflow:hidden;padding:20px 18px 16px}
+.p-top{display:flex;justify-content:space-between;align-items:flex-start}
+.p-title{font-size:17px;font-weight:800;color:var(--deep);letter-spacing:-.02em}
+.p-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.p-badge{font-size:10px;font-weight:700;color:#0B6A4F;background:#DFF6EC;border:1px solid #BEEAD8;border-radius:999px;padding:4px 8px;white-space:nowrap}
+.p-list{margin-top:16px;display:flex;flex-direction:column;gap:2px}
+.p-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #E8EEE9;font-size:13px;color:#2B3B33}
+.p-row:last-child{border-bottom:0}
+.p-check{width:18px;height:18px;border-radius:50%;background:var(--mint);display:grid;place-items:center;flex:none}
+.p-check i{width:8px;height:4.5px;border-left:2px solid #08402F;border-bottom:2px solid #08402F;transform:rotate(-45deg);margin-top:-2.5px;display:block}
+.p-check.empty{background:#fff;border:1.5px solid #CFDDD5}
+.p-progress{margin-top:14px;background:var(--deep);color:#fff;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.p-progress b{font-size:15px}
+.p-progress small{font-size:10px;color:#BFE6D6;display:block;font-weight:600}
+.bar{height:4px;background:rgba(255,255,255,.22);border-radius:2px;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:67%;background:var(--mint);border-radius:2px}
+.p-seal{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:10.5px;color:#3C6B59;background:#E8F6EF;border-radius:10px;padding:9px 11px;font-weight:600}
+@media(max-width:960px){
+  .hero{padding:48px 0 64px}
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+  .hero-sub{max-width:none}
+  .stage::before{inset:6% 6% 4% 6%}
+}
+
+/* stats */
+.stats{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#FBFBF7}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.stat{padding:34px 26px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-size:38px;font-weight:800;color:var(--deep);letter-spacing:-.04em;line-height:1}
+.stat b small{font-size:19px;margin-left:2px}
+.stat span{display:block;margin-top:10px;font-size:13.5px;color:#4A5C53;line-height:1.5}
+.source{padding:12px 0 26px;font-size:11.5px;color:#8A9990}
+@media(max-width:860px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stat b{font-size:31px}
+  .stat:nth-child(2){border-right:0}
+  .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--line)}
+}
+
+/* section shell */
+.section{padding:96px 0}
+.section-head{max-width:720px}
+.section-head h2{font-size:clamp(30px,3.4vw,44px);color:var(--deep);margin-top:14px}
+.section-head p{margin-top:18px;font-size:17px;color:#4A5C53}
+.tint{background:#FBFBF7;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+
+/* why */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);margin-top:56px;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.why-card{background:var(--paper);padding:34px 28px 38px}
+.why-num{font-size:12px;font-weight:800;letter-spacing:.12em;color:#2FA98A}
+.why-card h3{margin-top:16px;font-size:20px;color:var(--deep);letter-spacing:-.02em;line-height:1.35}
+.why-card p{margin-top:12px;font-size:15px;line-height:1.72;color:#4A5C53}
+.why-card .tag{display:inline-block;margin-top:18px;font-size:11.5px;font-weight:700;color:#0B6A4F;background:#E4F6EE;border-radius:6px;padding:5px 9px}
+@media(max-width:860px){.why-grid{grid-template-columns:1fr}}
+
+/* how */
+.how{background:var(--deep);color:#fff;border:0}
+.how .eyebrow{color:var(--mint)}
+.how .section-head h2{color:#fff}
+.how .section-head p{color:#B9CFC5}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:64px}
+.step{position:relative;padding-top:26px;border-top:1px solid rgba(255,255,255,.18)}
+.step-num{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--mint)}
+.step h3{margin-top:14px;font-size:19px;line-height:1.4;color:#fff}
+.step p{margin-top:10px;font-size:14.5px;line-height:1.7;color:#A9C2B7}
+.step .ic{margin-bottom:18px;color:var(--mint)}
+.how-foot{margin-top:64px;padding-top:28px;border-top:1px solid rgba(255,255,255,.18);display:flex;gap:40px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.how-foot p{font-size:15px;color:#C9DCD3;max-width:620px}
+.how-foot b{color:#fff}
+.how-foot a{color:var(--mint);font-weight:700;font-size:15px;border-bottom:1px solid rgba(47,211,160,.4);padding-bottom:2px}
+@media(max-width:860px){.steps{grid-template-columns:1fr 1fr;gap:24px}}
+@media(max-width:560px){.steps{grid-template-columns:1fr}}
+
+/* pricing */
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:56px;align-items:stretch}
+.plan{background:#fff;border:1px solid var(--line);border-radius:20px;padding:34px 32px 36px;display:flex;flex-direction:column}
+.plan.premium{background:var(--deep);color:#fff;border-color:var(--deep);position:relative;overflow:hidden}
+.plan.premium::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(47,211,160,.12);right:-90px;top:-90px}
+.plan-label{font-size:12px;font-weight:800;letter-spacing:.14em;color:#2FA98A}
+.plan.premium .plan-label{color:var(--mint)}
+.plan h3{margin-top:12px;font-size:24px;letter-spacing:-.03em}
+.plan .price{margin-top:18px;display:flex;align-items:baseline;gap:6px}
+.plan .price b{font-size:44px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.plan .price span{font-size:15px;color:var(--muted)}
+.plan.premium .price span{color:#A9C2B7}
+.plan .desc{margin-top:14px;font-size:14.5px;color:#4A5C53;min-height:44px}
+.plan.premium .desc{color:#C9DCD3}
+.plan ul{list-style:none;margin:26px 0 0;padding:26px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:11px;font-size:14.5px;flex:1}
+.plan.premium ul{border-top-color:rgba(255,255,255,.18)}
+.plan li{display:flex;gap:10px;align-items:flex-start;line-height:1.55}
+.plan li svg{flex:none;margin-top:3px}
+.plan .btn{margin-top:26px;width:100%}
+.plan.premium .btn-primary{background:var(--mint);color:#06251B}
+.plan.premium .btn-primary:hover{background:#4FE0B4}
+.plan-note{margin-top:14px;font-size:12.5px;color:var(--muted);text-align:center}
+@media(max-width:800px){.plans{grid-template-columns:1fr}}
+
+/* b2b */
+.b2b{background:#EDF3EF;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:80px 0}
+.b2b-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center}
+.b2b h2{font-size:clamp(28px,3vw,38px);color:var(--deep)}
+.b2b p{margin-top:16px;font-size:16px;color:#42544B}
+.b2b-list{display:grid;gap:12px}
+.b2b-item{background:var(--paper);border:1px solid #D5E3DB;border-radius:14px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.b2b-item b{font-size:15.5px;color:var(--deep);display:block}
+.b2b-item span{font-size:13px;color:var(--muted)}
+.b2b-item em{font-style:normal;font-size:13px;font-weight:700;color:#0B6A4F;white-space:nowrap}
+@media(max-width:860px){.b2b-grid{grid-template-columns:1fr;gap:34px}}
+
+/* trust */
+.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:52px}
+.trust-item h3{font-size:17px;color:var(--deep);margin-top:14px}
+.trust-item p{margin-top:8px;font-size:14.5px;color:#4A5C53;line-height:1.7}
+.trust-item .k{font-size:12px;font-weight:800;letter-spacing:.1em;color:#2FA98A}
+@media(max-width:800px){.trust-grid{grid-template-columns:1fr}}
+
+/* footer */
+.site-footer{background:var(--deep-2);color:#C9DCD3;padding:60px 0 40px;font-size:13.5px}
+.foot-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.14)}
+.foot-brand{display:flex;align-items:center;gap:11px}
+.foot-brand .brand-word{color:#fff}
+.foot-brand .brand-word span{color:#8FAA9E}
+.foot-links{display:flex;gap:26px;flex-wrap:wrap}
+.foot-links a:hover{color:#fff}
+.foot-info{margin-top:26px;display:flex;gap:26px;flex-wrap:wrap;font-size:12.5px;color:#8FAA9E;line-height:1.9}
+.foot-info b{color:#C9DCD3;font-weight:600}
+.copyright{margin-top:22px;font-size:12px;color:#6F8A7E}
+@media(max-width:640px){.foot-info{flex-direction:column;gap:4px}}
+</style>
+</head>
+<body>
+
+<header class="site-header" id="top">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="무온 홈">
+      <svg width="34" height="34" viewBox="35 35 442 442" aria-hidden="true">
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(338.27 113.5) rotate(30)"/>
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(420.54 256) rotate(90)"/>
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(338.27 398.5) rotate(150)"/>
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(173.73 398.5) rotate(210)"/>
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(91.46 256) rotate(270)"/>
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(173.73 113.5) rotate(330)"/>
+        <path d="M196 268 L234 306 L320 216" fill="none" stroke="#2FD3A0" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="brand-word">무온<span>MUON</span></div>
+    </a>
+    <nav class="nav-links">
+      <a href="#why">왜 필요한가</a>
+      <a href="#how">작동 방식</a>
+      <a href="#pricing">요금</a>
+      <a href="#business">B2B</a>
+    </nav>
+    <a class="nav-cta" href="#pricing">앱 살펴보기</a>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Apartment Inspection Record</p>
+      <h1>점검은 한 번,<br><em>기록은 영구히.</em></h1>
+      <p class="hero-sub">
+        입주 전 사전점검의 사진과 메모를 <strong>블록체인으로 봉인</strong>합니다.
+        나중에 누가 손대도 원본과 대조할 수 있는 기록,
+        하자담보기간 <strong>10년</strong>을 함께 가는 하자 관리 대장.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#pricing">앱 살펴보기</a>
+        <a class="btn btn-ghost" href="#how">어떻게 작동하나</a>
+      </div>
+      <div class="hero-note">
+        <span><i class="dot"></i>무료로 시작</span>
+        <span><i class="dot"></i>정부 가이드라인 점검리스트 적용</span>
+        <span><i class="dot"></i>2027년 1월 출시 예정</span>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="p-top">
+            <div>
+              <div class="p-title">우리 집 점검</div>
+              <div class="p-sub">2027. 3. 12 · 84㎡ · 입주 사전방문</div>
+            </div>
+            <span class="p-badge">봉인 완료</span>
+          </div>
+          <div class="p-list">
+            <div class="p-row"><span>현관 · 도어</span><span class="p-check"><i></i></span></div>
+            <div class="p-row"><span>거실 · 마감</span><span class="p-check"><i></i></span></div>
+            <div class="p-row"><span>주방 · 수전</span><span class="p-check"><i></i></span></div>
+            <div class="p-row"><span>욕실 · 타일</span><span class="p-check"><i></i></span></div>
+            <div class="p-row"><span>발코니 · 창호</span><span class="p-check empty"></span></div>
+          </div>
+          <div class="p-progress">
+            <div>
+              <small>점검 진행</small>
+              <b>32 / 48</b>
+              <div class="bar"><i></i></div>
+            </div>
+          </div>
+          <div class="p-seal">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E9C77" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            23개 항목 해시 기록 · 검증 가능
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="stats">
+  <div class="wrap">
+    <div class="stats-grid">
+      <div class="stat"><b>70.8<small>%</small></b><span>2025년 8월 사전점검 대행 이용률<br>(2022년 46.8%)</span></div>
+      <div class="stat"><b>52<small>%</small></b><span>점검 인력 1,099명 중<br>전문자격 보유율</span></div>
+      <div class="stat"><b>20–30<small>%</small></b><span>대행업체가 부풀린<br>하자 지적 건수</span></div>
+      <div class="stat"><b>10<small>년</small></b><span>구조부 하자담보책임<br>최장 기간</span></div>
+    </div>
+    <p class="source">자료: 주택산업연구원 「신축아파트 입주자 사전방문 점검대행 관련 실태조사」(2026. 3.), 뉴시스(2026. 3. 15.)</p>
+  </div>
+</section>
+
+<section class="section" id="why">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Why record</p>
+      <h2>점검은 늘었는데,<br>믿을 수 있는 기록은 없습니다</h2>
+      <p>사전점검은 이제 선택이 아닌 관행입니다. 문제는 그 점검이 남기는 것이 사진 몇 장과 카톡 캡처뿐이라는 점입니다.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-num">01</div>
+        <h3>자격보다 지적 건수가<br>성과가 되는 구조</h3>
+        <p>점검 인력 절반가량이 전문자격을 갖추지 않았고, 하자 건수는 20~30% 부풀려집니다. 많이 지적할수록 좋은 업체로 보이는 시장입니다.</p>
+        <span class="tag">과잉점검 · 무자격</span>
+      </div>
+      <div class="why-card">
+        <div class="why-num">02</div>
+        <h3>기록을 가진 쪽이<br>시공사인 앱</h3>
+        <p>처리 상태를 바꿀 수 있고, DB를 고칠 수 있고, 담보기간이 끝나면 접속이 막힙니다. 입주민이 증거로 쓰기 어려운 기록입니다.</p>
+        <span class="tag">이해상충 · 위변조 가능</span>
+      </div>
+      <div class="why-card">
+        <div class="why-num">03</div>
+        <h3>하자는 입주 후<br>10년간 생깁니다</h3>
+        <p>사전점검은 그 10년의 시작점일 뿐인데, 시장은 입주 전 하루에만 집중합니다. 정작 하자가 드러나는 뒤의 기록은 개인 폰에 흩어집니다.</p>
+        <span class="tag">일회성 · 지속관리 부재</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section how" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">How it works</p>
+      <h2>현장에서 30분,<br>그 뒤로 10년</h2>
+      <p>별도 장비 없이 스마트폰으로 점검하고, 촬영이 끝나는 순간 원본의 해시가 블록체인에 기록됩니다.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <svg class="ic" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-4"/><path d="M9 3v4h6V3"/><path d="M8 13h8M8 17h5"/></svg>
+        <div class="step-num">STEP 01</div>
+        <h3>표준 리스트로<br>빠짐없이 기록</h3>
+        <p>공간·공종별 체크리스트에 사진, 영상, 음성 메모를 붙입니다. 오프라인에서도 저장되고 귀가 후 한 번에 동기화됩니다.</p>
+      </div>
+      <div class="step">
+        <svg class="ic" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <div class="step-num">STEP 02</div>
+        <h3>원본의 해시를<br>블록체인에 봉인</h3>
+        <p>사진과 메모는 암호화해 보관하고, 해시값만 체인에 올립니다. 개인정보는 서버에, 증명은 체인에.</p>
+      </div>
+      <div class="step">
+        <svg class="ic" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 4.4-3 8.4-7 9-4-.6-7-4.6-7-9V7l7-4z"/><path d="M9 12l2 2 4-4"/></svg>
+        <div class="step-num">STEP 03</div>
+        <h3>누구나<br>원본 대조 가능</h3>
+        <p>시공사·보증기관에 원본을 넘기지 않고도 검증 링크 한 줄로 “조작되지 않았다”를 증명합니다.</p>
+      </div>
+      <div class="step">
+        <svg class="ic" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 4-6"/></svg>
+        <div class="step-num">STEP 04</div>
+        <h3>담보기간까지<br>이력 관리</h3>
+        <p>하자 항목별 보수 요청과 이력을 추적하고, 담보기간 만료 전에 알려드립니다. 10년치 대장이 남습니다.</p>
+      </div>
+    </div>
+    <div class="how-foot">
+      <p><b>기록 · 검증 · 관리</b> 세 계층이 하나의 앱에 있습니다. 점검 앱이 아니라, 점검의 순간을 증거로 만드는 기록 인프라입니다.</p>
+      <a href="#pricing">요금 보기 →</a>
+    </div>
+  </div>
+</section>
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Pricing</p>
+      <h2>기록은 무료,<br>증명과 관리는 연 1만 원</h2>
+      <p>사전점검 한 번에 15~30만 원을 씁니다. 그 기록을 10년간 쓸 수 있게 만드는 비용은 커피 두 잔 값입니다.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-label">FREE</div>
+        <h3>무료</h3>
+        <div class="price"><b>0원</b></div>
+        <p class="desc">스마트폰 기본 기능만으로 점검과 기록을 끝냅니다. 별도 장비가 필요 없습니다.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FA98A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>점검 기록 무제한</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FA98A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>항목당 사진 3장</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FA98A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>기록 전체 블록체인 봉인 1회</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FA98A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>하자 목록 조회</li>
+        </ul>
+        <a class="btn btn-ghost" href="#contact">무료로 시작하기</a>
+      </div>
+
+      <div class="plan premium">
+        <div class="plan-label">PREMIUM</div>
+        <h3>프리미엄</h3>
+        <div class="price"><b>10,000원</b><span>/ 년</span></div>
+        <p class="desc">측정기로 정밀하게 재고, 필요할 때 꺼내 쓸 수 있는 권한까지. 하자 대응은 여기서 갈립니다.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FD3A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>3rd party 측정기 연동 (열화상·거리·공기질)</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FD3A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>항목별 해시 · 재봉인 무제한</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FD3A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>PDF 증거 패키지 · 검증 링크 공유</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FD3A0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>보수 요청 · 담보기간 만료 알림</li>
+        </ul>
+        <a class="btn btn-primary" href="#contact">프리미엄 시작하기</a>
+      </div>
+    </div>
+    <p class="plan-note">요금은 출시 시점 기준이며, 사전예약 기간에는 첫해 무료로 제공할 예정입니다.</p>
+  </div>
+</section>
+
+<section class="b2b" id="business">
+  <div class="wrap b2b-grid">
+    <div>
+      <p class="eyebrow">For business</p>
+      <h2>단지 단위로<br>기록을 관리합니다</h2>
+      <p>입주민이 들고 다니는 기록은 시공사에도 필요합니다. 처리 이력을 증빙하고, 분쟁을 줄이고, 브랜드 신뢰를 쌓는 B2B 기록관리 SaaS.</p>
+      <a class="btn btn-primary" href="#contact" style="margin-top:26px">도입 문의</a>
+    </div>
+    <div class="b2b-list">
+      <div class="b2b-item"><div><b>시행사 · 시공사</b><span>단지별 하자 처리 이력, 분쟁 예방 리포트</span></div><em>연 600만 원~</em></div>
+      <div class="b2b-item"><div><b>관리사무소 · 입주자대표회의</b><span>민원·보수 이력 통합 관리, 담보기간 추적</span></div><em>단지 단위 계약</em></div>
+      <div class="b2b-item"><div><b>점검 대행업체</b><span>앱 화이트라벨 공급, 기록 인프라 연동</span></div><em>제휴</em></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="trust">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Why muon</p>
+      <h2>기록이 증거가 되려면,<br>권리와 기준이 있어야 합니다</h2>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="k">PATENT</div>
+        <h3>등록특허 제10-2462571호</h3>
+        <p>「건축물 하자 관리 방법, 서버 및 시스템」 전용실시권을 확보했습니다. 기록·검증·이력관리 구조가 특허 청구범위에 대응합니다.</p>
+      </div>
+      <div class="trust-item">
+        <div class="k">STANDARD</div>
+        <h3>정부 가이드라인 준수</h3>
+        <p>2026년 국토교통부 사전방문 대행 가이드라인의 표준 점검리스트와 필수 장비 기준을 앱 데이터 구조로 구현했습니다.</p>
+      </div>
+      <div class="trust-item">
+        <div class="k">INTEGRITY</div>
+        <h3>원본은 서버, 증명은 체인</h3>
+        <p>사진과 메모는 암호화해 보관하고 해시만 블록체인에 기록합니다. 개인정보는 지키고, 위변조는 증명합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer" id="contact">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <svg width="30" height="30" viewBox="35 35 442 442" aria-hidden="true">
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(338.27 113.5) rotate(30)"/>
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(420.54 256) rotate(90)"/>
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(338.27 398.5) rotate(150)"/>
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(173.73 398.5) rotate(210)"/>
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(91.46 256) rotate(270)"/>
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(173.73 113.5) rotate(330)"/>
+          <path d="M196 268 L234 306 L320 216" fill="none" stroke="#2FD3A0" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="brand-word">무온<span>MUON</span></div>
+      </div>
+      <div class="foot-links">
+        <a href="#why">왜 필요한가</a>
+        <a href="#how">작동 방식</a>
+        <a href="#pricing">요금</a>
+        <a href="#business">B2B</a>
+        <a href="#top">맨 위로</a>
+      </div>
+    </div>
+    <div class="foot-info">
+      <div><b>㈜무온</b> · 대표 임우영</div>
+      <div>사업자등록번호 <b>[등록 후 기재]</b></div>
+      <div>주소 <b>[사업장 주소]</b></div>
+      <div>문의 <b>[이메일 주소]</b></div>
+    </div>
+    <p class="copyright">© 2026 MUON Inc. All rights reserved.</p>
+  </div>
+</footer>
+<script>
+  const h = document.querySelector('.site-header');
+  const onScroll = () => h.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+</script>
+</body>
+</html>
