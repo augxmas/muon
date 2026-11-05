@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>기술 — 무온</title>
+<meta name="description" content="원본은 서버에, 증명은 블록체인에. 무온의 기록·검증·관리 구조와 보안 설계.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a class="brand" href="index.html" aria-label="무온 홈">
+      <svg width="34" height="34" viewBox="35 35 442 442" aria-hidden="true">
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(338.27 113.5) rotate(30)"/>
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(420.54 256) rotate(90)"/>
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(338.27 398.5) rotate(150)"/>
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(173.73 398.5) rotate(210)"/>
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(91.46 256) rotate(270)"/>
+        <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#0E3B2E" transform="translate(173.73 113.5) rotate(330)"/>
+        <path d="M196 268 L234 306 L320 216" fill="none" stroke="#2FD3A0" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="brand-word">무온<span>MUON</span></div>
+    </a>
+    <nav class="nav-links">
+      <a href="about.html">회사소개</a>
+      <a href="technology.html">기술</a>
+      <a href="index.html#pricing">요금</a>
+      <a href="careers.html">채용</a>
+      <a href="index.html#business">B2B</a>
+    </nav>
+    <a class="nav-cta" href="index.html#pricing">앱 살펴보기</a>
+  </div>
+</header>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="eyebrow">Technology</p>
+      <h1>원본은 서버에,<br>증명은 블록체인에</h1>
+      <p>블록체인을 만능 저장소로 쓰지 않습니다. 개인정보는 암호화해 서버에 두고, 원본의 해시와 시간만 체인에 남깁니다.</p>
+    </div>
+  </section>
+
+  <section class="prose" style="padding-bottom:8px">
+    <div class="wrap">
+      <h2>세 계층으로 나눈 이유</h2>
+      <p>점검 데이터는 성격이 다른 세 가지 일을 합니다. 현장에서 빠르게 기록하고, 나중에 조작되지 않았음을 증명하고, 담보기간 동안 계속 조회되어야 합니다. 한 저장소에 다 넣으면 셋 중 하나는 반드시 포기해야 합니다.</p>
+      <div class="stack">
+        <div class="card">
+          <div class="layer">LAYER 01 · RECORD</div>
+          <h3>기록</h3>
+          <p>표준 점검리스트에 사진·영상·음성 메모를 붙입니다. 위치와 시간이 자동으로 태깅되고, 통신이 끊긴 현장에서도 저장한 뒤 귀가 후 일괄 동기화됩니다.</p>
+        </div>
+        <div class="card">
+          <div class="layer">LAYER 02 · VERIFY</div>
+          <h3>검증</h3>
+          <p>원본의 SHA-256 해시를 만들어 배치로 묶어 체인에 앵커링합니다. 검증 링크만 있으면 원본을 넘기지 않고도 위변조 여부를 확인할 수 있습니다.</p>
+        </div>
+        <div class="card">
+          <div class="layer">LAYER 03 · MANAGE</div>
+          <h3>관리</h3>
+          <p>하자 항목별 보수 요청과 처리 이력을 추적하고, 공종별 담보기간을 자동 계산해 만료 전에 알립니다. 증거 패키지는 제출 양식에 맞춰 PDF로 나옵니다.</p>
+        </div>
+        <div class="card">
+          <div class="layer">LAYER 00 · STANDARD</div>
+          <h3>표준</h3>
+          <p>2026년 국토교통부 사전방문 대행 가이드라인의 점검리스트·필수장비 기준을 코드 체계로 옮겼습니다. 제도가 바뀌면 리스트 버전만 갱신합니다.</p>
+        </div>
+      </div>
+
+      <h2>무엇을 체인에 올리는가</h2>
+      <table>
+        <tr><th style="width:34%">대상</th><th>저장 위치</th><th style="width:34%">이유</th></tr>
+        <tr><td>사진·영상 원본</td><td>암호화된 오브젝트 스토리지</td><td>용량과 개인정보(얼굴·호수) 보호</td></tr>
+        <tr><td>해시·타임스탬프</td><td>퍼블릭 블록체인</td><td>제3자 누구나 위변조 검증</td></tr>
+        <tr><td>점검 메타데이터</td><td>서버 DB + 해시 앵커</td><td>조회 성능과 무결성 동시 확보</td></tr>
+        <tr><td>검증 링크</td><td>공개 URL + 온체인 조회</td><td>원본 없이 증명</td></tr>
+      </table>
+      <p>앵커링은 건별이 아니라 배치로 묶어 비용을 통제합니다. 점검 1건당 온체인 트랜잭션 1회, 비용은 수 원 수준입니다.</p>
+
+      <h2>구조</h2>
+    </div>
+  </section>
+
+  <section style="padding:0 0 40px">
+    <div class="wrap" style="max-width:900px">
+      <div class="arch">
+        <div class="arch-row">
+          <div class="arch-item"><b>앱</b><span>React Native · iOS/Android 단일 코드 · 오프라인 우선</span></div>
+          <div class="arch-item"><b>API</b><span>Python FastAPI · PostgreSQL · 전자서명 검증</span></div>
+        </div>
+        <div class="arch-row" style="margin-top:12px">
+          <div class="arch-item"><b>저장</b><span>S3 호환 스토리지 · 클라이언트 측 암호화 · 접근 로그</span></div>
+          <div class="arch-item"><b>체인</b><span>퍼블릭 체인 1종 · 배치 앵커링 · 검증 API</span></div>
+          <div class="arch-item"><b>연동</b><span>BLE / Wi-Fi Direct 측정기 SDK (열화상·거리·공기질)</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="prose" style="padding-top:24px">
+    <div class="wrap">
+      <h2>개인정보를 지키는 방식</h2>
+      <ul>
+        <li><strong>분리 보관</strong> — 원본 파일과 개인정보를 분리하고, 파일은 암호화된 상태로 저장합니다.</li>
+        <li><strong>비식별 처리</strong> — 통계·리포트에는 얼굴과 동·호수 등 식별 정보를 제거한 뒤 사용합니다.</li>
+        <li><strong>최소 수집</strong> — 점검 기록에 필요한 항목만 받고, 목적이 끝나면 파기합니다.</li>
+        <li><strong>권한 분리</strong> — 점검자·입주민·시공사·관리사무소가 보는 범위를 분리해 접근을 통제합니다.</li>
+      </ul>
+
+      <h2>권리 위에 세운 기술</h2>
+      <p>기록·검증·이력관리 구조는 등록특허 제10-2462571호 「건축물 하자 관리 방법, 서버 및 시스템」의 청구범위에 대응합니다. ㈜무온은 이 특허에 대한 전용실시권을 보유하고 있습니다.</p>
+      <p class="meta" style="border:0;padding:0;margin-top:26px">문의: [이메일 주소]</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <svg width="30" height="30" viewBox="35 35 442 442" aria-hidden="true">
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(338.27 113.5) rotate(30)"/>
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(420.54 256) rotate(90)"/>
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(338.27 398.5) rotate(150)"/>
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(173.73 398.5) rotate(210)"/>
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(91.46 256) rotate(270)"/>
+          <rect x="-79" y="-23" width="158" height="46" rx="14" fill="#FFFFFF" transform="translate(173.73 113.5) rotate(330)"/>
+          <path d="M196 268 L234 306 L320 216" fill="none" stroke="#2FD3A0" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="brand-word">무온<span>MUON</span></div>
+      </div>
+      <div class="foot-links">
+        <a href="about.html">회사소개</a>
+        <a href="technology.html">기술</a>
+        <a href="careers.html">채용</a>
+        <a href="terms.html">이용약관</a>
+        <a href="privacy.html">개인정보처리방침</a>
+      </div>
+    </div>
+    <div class="foot-info">
+      <div><b>㈜무온</b> · 대표 임우영</div>
+      <div>사업자등록번호 <b>[등록 후 기재]</b></div>
+      <div>주소 <b>[사업장 주소]</b></div>
+      <div>문의 <b>[이메일 주소]</b></div>
+    </div>
+    <p class="copyright">© 2026 MUON Inc. All rights reserved.</p>
+  </div>
+</footer>
+<script>
+  const h = document.querySelector('.site-header');
+  const onScroll = () => h.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+</script>
+</body>
+</html>
